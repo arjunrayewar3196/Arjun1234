@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    tools{
+        maven 'Maven-3.6.1'
+    }
+
+    stages {
+        stage('Git checkout') {
+            steps {
+             git 'https://github.com/arjunrayewar3196/hello-world-servlet.git'
+            }
+        }
+        stage('Build stage maven') {
+            steps {
+             sh 'mvn clean package'
+            }
+        }
+        stage('Post Junit test results') {
+            steps {
+             junit '**/target/surefire-reports/*.xml'
+            }
+        }
+        stage('Sonarqube integration stage') {
+            steps {
+               withSonarQubeEnv('SonarQube-7.1') {
+               sh 'mvn clean package sonar:sonar'
+            }
+            }
+        }
+        
+    }
+}
