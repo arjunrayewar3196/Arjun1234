@@ -1,0 +1,13 @@
+pipeline {
+    agent any
+    tools{
+        maven 'Maven'
+    }
+stages {
+    stage ('checkout stage'){
+        steps{
+            git https://github.com/arjunrayewar3196/hello-world-servlet.git
+        }
+    }
+}    
+}
