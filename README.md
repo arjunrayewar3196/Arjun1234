@@ -33,6 +33,11 @@ Jenkins – an open source automation server which enables developers around the
    28  sudo service sonar start
    29  yum install git -y
 
+nuxus install
+https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/amazon-linux-install.html
+sudo yum install java-1.8.0-amazon-corretto
+sudo yum install java-1.8.0-amazon-corretto-devel
+https://www.coachdevops.com/2019/10/how-to-setup-sonatype-nexus-3-on-redhat.html
 
 ## Author
 Arjun Rayewar
