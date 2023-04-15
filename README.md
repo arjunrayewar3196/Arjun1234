@@ -6,13 +6,8 @@ https://www.jenkins.io/doc/pipeline/steps/sonar/
 SonarQube Scanner for Jenkins
 
 Jenkins – an open source automation server which enables developers around the world to reliably build, test, and deploy their software
-
-www.jenkins.io
-     5    ls      6    sudo yum update -y  ... by Jyoshnavi Injamuri
-Jyoshnavi Injamuri
-Yesterday 13:24
-
-    5  ls
+## Commands to install tols  
+  5  ls
     6  sudo yum update -y
     7  sudo wget -O /etc/yum.repos.d/jenkins.repo \ https://pkg.jenkins.io/redhat-stable/jenkins.repo
     8  sudo dnf install java-11-amazon-corretto -y
@@ -37,3 +32,7 @@ Yesterday 13:24
    27  sudo yum install sonar
    28  sudo service sonar start
    29  yum install git -y
+
+
+## Author
+Arjun Rayewar
