@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    tools{
+        maven 'Maven-3.6.1'
+    }
+
+    stages {
+        stage('Git checkout') {
+            steps {
+             git 'https://github.com/arjunrayewar3196/hello-world-servlet.git'
+            }
+        }
+        stage('Build stage maven') {
+            steps {
+             sh 'mvn clean package'
+            }
+        }
+        stage('Post Junit test results') {
+            steps {
+             junit '**/target/surefire-reports/*.xml'
+            }
+        }
+        stage('Post Junit test results') {
+            steps {
+             nexusArtifactUploader credentialsId: '0305', groupId: 'com.geekcap.vmturbo', nexusUrl: '52.15.102.12:8081/nexus/', nexusVersion: 'nexus2', protocol: 'http', repository: 'arjun-repo', version: 'hello-world-servlet-example'
+            }
+        }
+        
+    }
+}
