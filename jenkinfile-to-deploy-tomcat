@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+    tools{
+        maven 'Maven-3.6.1'
+    }
+
+    stages {
+        stage('Git checkout') {
+            steps {
+             git 'https://github.com/arjunrayewar3196/hello-world-servlet.git'
+            }
+        }
+        stage('Build stage maven') {
+            steps {
+             sh 'mvn clean install'
+            }
+        }
+        stage('Post Junit test results') {
+            steps {
+             junit '**/target/surefire-reports/*.xml'
+            }
+        }
+        stage('build deploy') {
+            steps {
+             sshagent(['tomcat-creds-login']) {
+               sh "scp -o StrictHostKeyChecking=no /var/lib/jenkins/workspace/nexus-stage/target/helloworld.war ec2-user@3.20.240.174:/root/apache-tomcat-8.5.87/webapps"
+}
+            }
+        }
+        
+    }
+}
