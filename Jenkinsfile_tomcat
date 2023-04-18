@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    environment {
+        NEXUS_USERNAME = 'admin'
+        NEXUS_PASSWORD = 'admin123'
+        TOMCAT_URL = 'http://18.222.252.201:8080/'
+        TOMCAT_USERNAME = 'admin'
+        TOMCAT_PASSWORD = 'admin'
+        WAR_NAME = 'hello-world-servlet-example-1.0.war'
+    }
+    stages {
+        stage('Download WAR') {
+            steps {
+                script {
+                    def nexusUrl = 'http://18.118.103.203:8081/nexus/content/repositories/0305/'
+                    def warUrl = "$nexusUrl/com/geekcap/vmturbo/hello-world-servlet-example/1.0/$WAR_NAME"
+                    sh "curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD -o $WAR_NAME $warUrl"
+                }
+            }
+        }
+        stage('Deploy WAR') {
+            steps {
+                script {
+                    sh "curl -u $TOMCAT_USERNAME:$TOMCAT_PASSWORD --upload-file $WAR_NAME $TOMCAT_URL/manager/text/deploy?path=/$WAR_NAME"
+                }
+            }
+        }
+    }
+}
