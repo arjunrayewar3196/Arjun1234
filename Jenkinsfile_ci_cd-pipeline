@@ -43,6 +43,19 @@ pipeline {
            }
         }
 
+        stage('Login') {
+           steps {
+              sh 'docker login -u arjunrayewar -p Arjun#0401'
+           }
+        }
+
+        stage('push') {
+           steps {
+              sh 'docker push arjunrayewar/$JOB_NAME:v1.$BUILD_ID'
+           }
+        }
+        
+
         // stage('Docker push image') {
         //     steps { 
         //        withCredentials([gitUsernamePassword(credentialsId: '567', gitToolName: 'git')]) 
