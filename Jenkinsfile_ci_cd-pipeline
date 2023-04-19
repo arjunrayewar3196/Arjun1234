@@ -31,6 +31,13 @@ pipeline {
             }
             }
         }
+        stage('Docker image build') {
+            steps {
+               sh 'docker image build -t $JOB_NAME:v1.$BUILD_ID .'
+               sh 'docker image tag $JOB_NAME:v1.$BUILD_ID arjunrayewar/$JOB_NAME:v1.$BUILD_ID'
+               sh 'docker image tag $JOB_NAME:v1.$BUILD_ID arjunrayewar/JOB_NAME:latest'
+            }
+        }
         stage('nexus'){
             steps{
                nexusPublisher nexusInstanceId: '0305', nexusRepositoryId: '0305', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: '/var/lib/jenkins/workspace/complete_ci-cd_pipelin/target/01-maven-web-app.war']], mavenCoordinate: [artifactId: '01-maven-web-app', groupId: 'in.ashokit', packaging: 'war', version: '$BUILD_NUMBER']]]
