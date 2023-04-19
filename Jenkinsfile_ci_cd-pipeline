@@ -43,11 +43,6 @@ pipeline {
            }
         }
 
-        stage('Login') {
-           steps {
-              sh 'docker login -u arjunrayewar -p Arjun#0401'
-           }
-        }
 
         stage('push') {
            steps {
