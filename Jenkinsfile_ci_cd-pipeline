@@ -40,6 +40,7 @@ pipeline {
 
         stage('Docker push image') {
             steps {
+                withCredentials([gitUsernamePassword(credentialsId: '567', gitToolName: 'git')])
                sh 'docker image push arjunrayewar/$JOB_NAME:v1.$BUILD_ID'
                
             }
