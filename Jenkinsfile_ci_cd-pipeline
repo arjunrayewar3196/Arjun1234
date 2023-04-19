@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+    tools {
+       maven "Maven-3.6.1"
+    }
+    environment {
+        NEXUS_USERNAME = 'admin'
+        NEXUS_PASSWORD = 'admin123'
+        TOMCAT_URL = 'http://18.188.223.2:8080/'
+        TOMCAT_USERNAME = 'admin'
+        TOMCAT_PASSWORD = 'admin'
+        WAR_NAME = '01-maven-web-app-$BUILD_NUMBER.war'
+    }
+    stages {
+        stage('git checkout'){
+            steps{
+                script{
+                git 'https://github.com/arjunrayewar3196/maven-web-app.git'
+               }
+            }
+        }
+        stage('mv build'){
+            steps{
+               sh 'mvn clean install'
+            }
+        }
+        stage('Sonarqube integration stage') {
+            steps {
+               withSonarQubeEnv('SonarQube-7.1') {
+               sh 'mvn clean package sonar:sonar'
+            }
+            }
+        }
+        stage('nexus'){
+            steps{
+               nexusPublisher nexusInstanceId: '0305', nexusRepositoryId: '0305', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: '/var/lib/jenkins/workspace/complete_ci-cd_pipelin/target/01-maven-web-app.war']], mavenCoordinate: [artifactId: '01-maven-web-app', groupId: 'in.ashokit', packaging: 'war', version: '$BUILD_NUMBER']]]
+            }
+        }
+        stage('Download WAR') {
+            steps {
+                script {
+                    def nexusUrl = 'http://3.142.94.52:8081/nexus/content/repositories/0305/'
+                    def warUrl = "$nexusUrl/in/ashokit/01-maven-web-app/$BUILD_NUMBER/$WAR_NAME"
+                    sh "curl -u $NEXUS_USERNAME:$NEXUS_PASSWORD -o $WAR_NAME $warUrl"
+                }
+            }
+        }
+        
+        stage('Deploy WAR') {
+            steps {
+                script {
+                    sh "curl -u $TOMCAT_USERNAME:$TOMCAT_PASSWORD --upload-file $WAR_NAME $TOMCAT_URL/manager/text/deploy?path=/$WAR_NAME"
+                }
+            }
+        }
+        
+    }
+}
