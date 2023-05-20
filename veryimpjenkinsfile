@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    tools{
+        maven 'maven3'
+    }
+
+    stages {
+        stage('Git checkout') {
+            steps {
+             git branch: 'main', url: 'https://github.com/arjunrayewar3196/Jenkins-Zero-To-Hero.git'
+            }
+        }
+        stage('maven build') {
+            steps {
+             sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && mvn clean package'
+            }
+        }
+        stage('docker image build') {
+            steps {
+             sh 'docker image build -t $JOB_NAME:v1.$BUILD_ID java-maven-sonar-argocd-helm-k8s/spring-boot-app/'
+             sh 'docker image tag $JOB_NAME:v1.$BUILD_ID arjunrayewar/$JOB_NAME:v1.$BUILD_ID'
+             sh 'docker image tag $JOB_NAME:v1.$BUILD_ID arjunrayewar/$JOB_NAME:latest'
+            }
+        }
+        stage('docker image push') {
+            steps {
+             sh "docker login -u arjunrayewar -p Arjun#0401"
+             sh 'docker image push arjunrayewar/$JOB_NAME:v1.$BUILD_ID'
+             sh 'docker image push arjunrayewar/$JOB_NAME:latest'
+             
+            }
+        }
+        stage('Apply Kubernetes files') {
+            steps {
+              sh 'echo ${WORKSPACE}'  
+              sh label: '', script: '''scp ${WORKSPACE}/deplyementservicce.yml root@18.216.140.78:/root/jenkins
+                                  ssh root@18.216.140.78 kubectl apply -f /root/jenkins/deplyementservicce.yml'''
+            //  sh label: '', script: '''scp ${WORKSPACE}/kubernetes-configmap.yml root@3.144.207.249:/root/jenkins
+                                //   ssh root@3.144.207.249 kubectl apply -f /root/jenkins/kubernetes-configmap.yml'''
+           
+        }
+     }
+    }
+}
