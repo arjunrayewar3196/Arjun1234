@@ -1,3 +1,4 @@
+wall <<< "Your message"
 login to git hub 
 
 jenkins ssh-keygen
