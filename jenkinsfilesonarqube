@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    tools {
+      maven 'maven3'
+      }
+    stages {
+        stage('git checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/arjunrayewar3196/mrdevops-springboot-mongo-docker-application.git'
+            }
+        }
+        stage('Build stage maven') {
+            steps {
+             sh 'mvn clean package'
+            }
+        }
+        stage('Jn') {
+            steps {
+             junit '**/target/surefire-reports/*.xml'
+            }
+        }
+        stage('SonarQube') {
+            steps {
+                withSonarQubeEnv('Sonarqube-3.4') {
+                sh 'mvn clean package sonar:sonar'
+              }
+            }
+        }
+        // stage('Sonarqube') {
+        //     environment {
+        //      def scannerHome = tool 'Sonarqube-3.4';
+        // }
+        // steps {
+        // withSonarQubeEnv('sonarqube') {
+        //     sh "${scannerHome}/bin/sonar-scanner"
+        // }
+        // }
+        // }
+        
+    }
+}
